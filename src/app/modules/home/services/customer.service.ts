@@ -7,9 +7,11 @@ import { Customer } from '../model/customer';
   providedIn: 'root'
 })
 export class CustomerService {
+  
+  
   private autorizado: boolean = false;
   public emissorDeEvento = new EventEmitter();
-  private url: string = "https://meuapp-spring.herokuapp.com/api/spring/";
+  private url: string = "http://localhost:8080/api/spring/";
   /*private customers: Array<Customer> = [{
     "id": {
       "telephone": "9999",
@@ -25,19 +27,24 @@ export class CustomerService {
     return this.customers;
   }*/
 
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-type': 'application/json',
-      Autorization: 'Bearer 11z3x54c45454h'
-    })
-  };
-
   public getAutorizado(): boolean {
     return this.autorizado;
   }
+
   public getCustomers(): Observable <Array<Customer>> {
     this.autorizado = true;
-    return this.http.get<Array<Customer>>(`${this.url}customers`, this.httpOptions).pipe(
+  
+    var token = localStorage.getItem('token');
+
+    var httpOptions = {
+      headers: new HttpHeaders({
+        'Content-type': 'application/json',
+        'Authorization': "" + token
+      }
+     )
+    }
+
+    return this.http.get<Array<Customer>>(`${this.url}customers`, httpOptions).pipe(
       res => res,
       error => error
     );
